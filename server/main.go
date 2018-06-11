@@ -10,7 +10,7 @@ func main() {
 	port := os.Args[1]
 	fmt.Printf("[benchmark server] start [:%v]\n", port)
 
-	tcpAddr, err := net.ResolveTCPAddr("tcp", fmt.Sprintf(":%s", port))
+	tcpAddr, err := net.ResolveTCPAddr("tcp", fmt.Sprintf("0.0.0.0:%s", port))
 	if err != nil {
 		panic(err)
 	}
