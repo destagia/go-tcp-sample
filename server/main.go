@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net"
 	"os"
-	"time"
 )
 
 func main() {
@@ -39,8 +38,6 @@ func handleClient(conn net.Conn) {
 			fmt.Println(err.Error())
 			break
 		}
-
-		time.Sleep(time.Duration(2 * time.Second))
 
 		conn.Write(buf[:n])
 	}
