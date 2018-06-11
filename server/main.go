@@ -25,7 +25,7 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		fmt.Printf("accepted: %s", conn.RemoteAddr().String())
+		fmt.Printf("accepted: %s\n", conn.RemoteAddr().String())
 		go handleClient(conn)
 	}
 }
