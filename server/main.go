@@ -25,13 +25,12 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-
+		fmt.Printf("accepted: %s", conn.RemoteAddr().String())
 		go handleClient(conn)
 	}
 }
 
 func handleClient(conn net.Conn) {
-	fmt.Printf("accepted: %s", conn.RemoteAddr().String())
 
 	for {
 		buf := make([]byte, 1024)
@@ -43,4 +42,6 @@ func handleClient(conn net.Conn) {
 
 		conn.Write(buf[:n])
 	}
+
+	conn.Close()
 }
