@@ -60,21 +60,16 @@ func main() {
 	fmt.Println("Wait for finishing...")
 
 	for {
-		time.Sleep(time.Duration(1 * time.Second))
-
-		deadCount := 0
-		for {
-			select {
-			case _ = <-ch:
-				deadCount++
-				continue
-			default:
-				break
+		select {
+		case code := <-ch:
+			if code == 0 {
+				// fmt.Printf(".")
+			} else if code == 1 {
 			}
+			continue
+		default:
 			break
 		}
-
-		// fmt.Printf("%d client is dead\n", deadCount)
 	}
 }
 
@@ -92,21 +87,24 @@ func client(serverIP string, serverPort string, deadline int, fps time.Duration,
 
 	buf := make([]byte, 1024)
 	for {
-		// time.Sleep(time.Duration(fps))
-		fmt.Printf(".")
+		time.Sleep(time.Duration(fps))
+		ch <- 0
 
+		fmt.Printf("writing... :")
 		// conn.SetWriteDeadline(time.Now().Add(time.Duration(deadline) * time.Second))
-		if _, err := conn.Write([]byte("hello world!")); err != nil {
+		if _, err := conn.Write([]byte("h")); err != nil {
 			conn.Close()
-			ch <- 0
+			ch <- 1
 			break
 		}
-
+		fmt.Printf("%v\n", time.Now().String())
+		fmt.Printf("reading... :")
 		// conn.SetReadDeadline(time.Now().Add(time.Duration(deadline) * time.Second))
 		if _, err := conn.Read(buf); err != nil {
 			conn.Close()
-			ch <- 0
+			ch <- 1
 			break
 		}
+		fmt.Printf("%v\n", time.Now().String())
 	}
 }

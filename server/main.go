@@ -33,13 +33,17 @@ func main() {
 func handleClient(conn net.Conn) {
 	buf := make([]byte, 256)
 	for {
-		n, err := conn.Read(buf)
-		if err != nil {
+		var mes []byte
+		if n, err := conn.Read(buf); err != nil {
 			fmt.Println(err.Error())
 			break
+		} else {
+			mes = buf[:n]
 		}
 
-		conn.Write(buf[:n])
+		if _, err := conn.Write(mes); err != nil {
+			fmt.Println(err.Error())
+		}
 	}
 
 	conn.Close()
