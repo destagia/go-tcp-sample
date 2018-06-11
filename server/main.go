@@ -31,9 +31,8 @@ func main() {
 }
 
 func handleClient(conn net.Conn) {
-
+	buf := make([]byte, 256)
 	for {
-		buf := make([]byte, 1024)
 		n, err := conn.Read(buf)
 		if err != nil {
 			fmt.Println(err.Error())

@@ -22,11 +22,14 @@ func main() {
 	}
 
 	fmt.Printf("FPS: %d\n", messagePerSec)
+	fps := time.Duration(int(float64(1) / float64(messagePerSec) * float64(time.Second)))
+
+	fmt.Printf("FPS sec: %d\n", fps)
 
 	ch := make(chan int, 1000)
 
 	for i := 0; i < int(clientNum); i++ {
-		go client(serverIP, serverPort, int(deadline), int(messagePerSec), ch)
+		go client(serverIP, serverPort, int(deadline), fps, ch)
 	}
 
 	for i := 0; i < int(clientMaxNum - clientNum); i++ {
@@ -51,7 +54,7 @@ func main() {
 		}
 
 		time.Sleep(time.Duration(100 * time.Millisecond))
-		go client(serverIP, serverPort, int(deadline), int(messagePerSec), ch)
+		go client(serverIP, serverPort, int(deadline), fps, ch)
 	}
 
 	fmt.Println("Wait for finishing...")
@@ -71,12 +74,11 @@ func main() {
 			break
 		}
 
-		fmt.Printf("%d client is dead\n", deadCount)
+		// fmt.Printf("%d client is dead\n", deadCount)
 	}
 }
 
-func client(serverIP string, serverPort string, deadline int, messagePerSec int, ch chan int) {
-	fps := int(float64(1) / float64(messagePerSec) * float64(time.Second))
+func client(serverIP string, serverPort string, deadline int, fps time.Duration, ch chan int) {
 
 	tcpAddr, err := net.ResolveTCPAddr("tcp", serverIP+":"+serverPort)
 	if err != nil {
@@ -88,20 +90,19 @@ func client(serverIP string, serverPort string, deadline int, messagePerSec int,
 		panic(err)
 	}
 
+	buf := make([]byte, 1024)
 	for {
-		time.Sleep(time.Duration(fps))
+		// time.Sleep(time.Duration(fps))
+		fmt.Printf(".")
 
-		fmt.Println("loop")
-
-		conn.SetWriteDeadline(time.Now().Add(time.Duration(deadline) * time.Second))
+		// conn.SetWriteDeadline(time.Now().Add(time.Duration(deadline) * time.Second))
 		if _, err := conn.Write([]byte("hello world!")); err != nil {
 			conn.Close()
 			ch <- 0
 			break
 		}
 
-		buf := make([]byte, 1024)
-		conn.SetReadDeadline(time.Now().Add(time.Duration(deadline) * time.Second))
+		// conn.SetReadDeadline(time.Now().Add(time.Duration(deadline) * time.Second))
 		if _, err := conn.Read(buf); err != nil {
 			conn.Close()
 			ch <- 0
